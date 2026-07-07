@@ -1,0 +1,44 @@
+# Geospatial Command Center — dashboard + optional PostgreSQL warehouse
+# Start: docker compose up -d
+# App:   http://localhost:8501
+
+services:
+  dashboard:
+    build: .
+    container_name: geospatial-command-center
+    ports:
+      - "8501:8501"
+    env_file:
+      - .env
+    environment:
+      OSM_OPS_DATABASE_URL: postgresql://osm:osm@db:5432/osm_ops
+    volumes:
+      - ./data:/app/data
+      - ./config:/app/config:ro
+      - ./.cache:/app/.cache
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    container_name: geospatial-command-center-db
+    environment:
+      POSTGRES_USER: osm
+      POSTGRES_PASSWORD: osm
+      POSTGRES_DB: osm_ops
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./sql/osm_ops_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U osm -d osm_ops"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  pgdata:
