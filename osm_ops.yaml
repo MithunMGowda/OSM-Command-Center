@@ -1,0 +1,27 @@
+# OSM operations sync — edit and run: python3 scripts/sync_osm_ops.py
+
+mappers:
+  - Pavang05
+  - ramshi04
+  - mitz01
+  - nagz02
+
+# Inclusive start (YYYY-MM-DD). Sync/filter end defaults to today when omitted.
+start_date: "2024-12-01"
+# end_date: "2026-05-26"  # optional cap; omit to use today
+
+# Optional per-mapper start (omit a user to use start_date above)
+mapper_start_dates:
+  Pavang05: "2024-12-01"
+  ramshi04: "2024-12-01"
+  mitz01: "2024-12-01"
+  nagz02: "2024-12-01"
+
+output_csv: data/osm_changesets_with_counts.csv
+
+# Optional: set via environment instead
+# database_url: postgresql://osm:osm@localhost:5433/osm_ops
+# osmcha_token: your-token-from-osmcha-account-settings
+
+download_diffs: true
+merge_osmcha: true
